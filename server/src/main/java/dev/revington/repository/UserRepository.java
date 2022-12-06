@@ -16,6 +16,9 @@ public interface UserRepository extends MongoRepository<User, String> {
     @Query("{'email': ?0}")
     User findByEmail(String email);
 
+    @Query("{$exp:  {$or:  [{$eq: [?0, \"$email\"]}, {$eq: [?0, \"$username\"]}]}}")
+    User findByEmailOrUsername(String value);
+
     @Query(value = "{'username' : ?0}", fields = "{email: 0, attempts: 0, socketId: 0, status: 0, validity: 0, password: 0}")
     User findPersonal(String username);
     
