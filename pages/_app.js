@@ -3,6 +3,7 @@ import "../styles/globals.css";
 import "../styles/const.css";
 import { useRouter } from "next/router";
 import PageLoader from "../src/components/PageLoader";
+import Head from "next/head";
 
 const Application = (props) => {
   return <ApplicationComponent {...props} router={useRouter()} />;
@@ -49,6 +50,11 @@ class ApplicationComponent extends ReactComponent {
 
     return (
       <>
+        <Head>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link href={"/static/favicon.ico"} rel="icon"/>
+        </Head>
+
         <PageLoader
           color="#00ccff"
           progress={progress}
