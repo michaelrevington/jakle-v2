@@ -1,7 +1,6 @@
 import { Component } from "react";
 
 import ComponentStyles from "../../styles/Component.module.css";
-import Styles from "../../styles/PageLoader.module.css";
 
 export default class PageLoader extends Component {
   render() {
@@ -9,7 +8,7 @@ export default class PageLoader extends Component {
     return (
       <>
         <span
-          className={ComponentStyles.absolute + " " + Styles.loadingBar}
+          className={ComponentStyles.absolute}
           style={{
             zIndex: 50000,
             width: `${progress}%`,
