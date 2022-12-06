@@ -38,4 +38,6 @@ public class Parameter {
 
     public static final String AUTH_TOKEN_PATH = "/";
 
+    public static final String API_RESULTS = "results";
+
 }
