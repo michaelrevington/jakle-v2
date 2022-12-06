@@ -49,4 +49,65 @@ public class Credential {
         return true;
     }
 
+    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<JSONObject> login(HttpServletRequest req, HttpServletResponse resp,
+                                            @RequestBody User user,
+                                            @RequestParam(required = false, defaultValue = "false") String remember) throws IOException {
+        if (!changeCred(user)) {
+            resp.sendError(500);
+            return null;
+        }
+
+        User client = userRepository.findByEmail(user.getEmail());
+        if (client == null) {
+            resp.sendError(1022, Parameter.E1022);
+            return null;
+        }
+
+        if (client.getPassword().equals(user.getPassword())) {
+            if (client.getValidity() == Parameter.ACCOUNT_INVALIDATED) {
+                resp.sendError(1023, Parameter.E1023);
+                return null;
+            } else {
+                if (client.getStatus() == Parameter.STATUS_DISABLED) {
+                    resp.sendError(1024, Parameter.E1024);
+                    return null;
+                } else {
+                    Token token;
+                    try {
+                        token = TokenUtil.generateToken(Parameter.AUTH_TOKEN, client);
+                    } catch (Exception e) {
+                        LOGGER.log(Level.SEVERE, null, e);
+                        resp.sendError(500);
+                        return null;
+                    }
+                    tokenRepository.save(token);
+
+                    CookieUtil.setCookie(resp, Parameter.TOKEN, cookie -> {
+                        cookie.setValue(token.getToken());
+                        cookie.setHttpOnly(true);
+                        cookie.setPath(Parameter.AUTH_TOKEN_PATH);
+
+                        if (remember.equals("true")) {
+                            cookie.setMaxAge(Parameter.AUTH_TOKEN_TIMEOUT);
+                        }
+                    });
+                }
+            }
+        } else {
+            if (client.getStatus() == Parameter.STATUS_ACTIVE) {
+                if (client.getAttempts() >= 8) {
+                    client.setStatus(Parameter.STATUS_DISABLED);
+                    client.setAttempts(0);
+                } else {
+                    client.setAttempts(client.getAttempts() + 1);
+                }
+            }
+
+            resp.sendError(1022, Parameter.E1022);
+            return null;
+        }
+
+        return new ResponseEntity<>(StatusHandler.S200, HttpStatus.OK);
+    }
 }
