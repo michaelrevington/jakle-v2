@@ -11,6 +11,7 @@ public class StatusHandler {
     public static final JSONObject E1024 = createStatus(1024, Parameter.E1024);
     public static final JSONObject E1025 = createStatus(1025, Parameter.E1025);
     public static final JSONObject E1026 = createStatus(1026, Parameter.E1026);
+    public static final JSONObject E1027 = createStatus(1027, Parameter.E1027);
 
     public static final JSONObject createStatus(int code, String query) {
         return new JSONObject()

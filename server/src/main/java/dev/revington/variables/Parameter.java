@@ -8,6 +8,7 @@ public class Parameter {
     public static final String E1024 = "Account Disabled";
     public static final String E1025 = "Account Already Exists";
     public static final String E1026 = "One or more fields are empty";
+    public static final String E1027 = "Username is already in use";
 
     public static final String S200 = "Query Successful";
 
