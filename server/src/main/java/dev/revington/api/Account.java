@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 @RestController
@@ -67,6 +68,24 @@ public class Account {
             });
         }
 
+        userRepository.save(client);
+
+        return new ResponseEntity<>(StatusHandler.S200, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/username")
+    public ResponseEntity<JSONObject> updateUsername(HttpServletRequest request, HttpServletResponse response,
+                                                     @RequestBody User user) throws IOException {
+        User client = userRepository.findByUsername(user.getUsername());
+        if (client != null) {
+            response.sendError(1027, Parameter.E1027);
+            return null;
+        }
+
+        client = userRepository.findById(request.getAttribute(Parameter.CLIENT_ID).toString()).get();
+
+        client.setUsername(user.getUsername());
         userRepository.save(client);
 
         return new ResponseEntity<>(StatusHandler.S200, HttpStatus.OK);
