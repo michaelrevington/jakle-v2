@@ -110,4 +110,35 @@ public class Credential {
 
         return new ResponseEntity<>(StatusHandler.S200, HttpStatus.OK);
     }
+
+    @PostMapping("/signup")
+    public ResponseEntity<JSONObject> signUp(HttpServletRequest req, HttpServletResponse resp,
+                                             @RequestBody User user) throws IOException {
+        if (!changeCred(user)) {
+            resp.sendError(500);
+            return null;
+        }
+
+        User client = userRepository.findByEmail(user.getEmail());
+        if (client != null) {
+            resp.sendError(1025, Parameter.E1025);
+            return null;
+        }
+
+        if (user.getEmail() == null || user.getPassword() == null || user.getFirstname() == null ||
+                user.getLastname() == null) {
+            resp.sendError(1026, Parameter.E1026);
+            return null;
+        }
+
+        user.setName(user.getFirstname() + " " + user.getLastname());
+        user.setFirstname(null);
+        user.setLastname(null);
+        user.setCreated(new Date().getTime());
+        user.setValidity(Parameter.ACCOUNT_INVALIDATED);
+
+        userRepository.save(user);
+
+        return new ResponseEntity<>(StatusHandler.S200, HttpStatus.OK);
+    }
 }
