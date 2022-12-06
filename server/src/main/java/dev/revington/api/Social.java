@@ -27,7 +27,7 @@ public class Social {
                                                           @RequestParam String username) {
         User user = userRepository.findById(request.getAttribute(Parameter.CLIENT_ID).toString()).get();
 
-        messageRepository.deleteByUsername(user.getId(), username);
+        messageRepository.deleteByUsername(user.getUsername(), username);
 
         return new ResponseEntity<>(StatusHandler.S200, HttpStatus.OK);
     }
