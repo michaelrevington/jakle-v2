@@ -24,6 +24,7 @@ public class User {
     private String socketId;
     private String active;
     private String type;
+    private String identity;
 
     private Date dateOfBirth;
 
@@ -46,6 +47,14 @@ public class User {
 
     public String getUsername() {
         return username;
+    }
+
+    public String getIdentity() {
+        return identity;
+    }
+
+    public void setIdentity(String identity) {
+        this.identity = identity;
     }
 
     public void setUsername(String username) {
