@@ -15,6 +15,8 @@ public class User {
     
     @Id
     private String id;
+
+    private String username;
     private String name; 
     private String email;
     private String password;
@@ -40,6 +42,14 @@ public class User {
 
     public long getCreated() {
         return created;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public int getAttempts() {
