@@ -2,6 +2,7 @@ package dev.revington.util;
 
 import org.apache.tomcat.util.security.MD5Encoder;
 
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -19,7 +20,7 @@ public class SecurityUtil {
     public static String md5Hash(String text) throws NoSuchAlgorithmException {
         MessageDigest messageDigest = MessageDigest.getInstance("MD5");
         messageDigest.update(text.getBytes(StandardCharsets.UTF_8));
-        return new String(messageDigest.digest());
+        return URLEncoder.encode(new String(messageDigest.digest()), StandardCharsets.UTF_8);
     }
 
 }
