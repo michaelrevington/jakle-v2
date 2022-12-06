@@ -73,7 +73,6 @@ public class Account {
         return new ResponseEntity<>(StatusHandler.S200, HttpStatus.OK);
     }
 
-
     @PostMapping("/username")
     public ResponseEntity<JSONObject> updateUsername(HttpServletRequest request, HttpServletResponse response,
                                                      @RequestBody User user) throws IOException {
