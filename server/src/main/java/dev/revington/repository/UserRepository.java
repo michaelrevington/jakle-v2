@@ -72,7 +72,7 @@ public interface UserRepository extends MongoRepository<User, String> {
     @Aggregation(pipeline = {
             "{$unset: [\"email\",\"password\",\"socketId\",\"validity\",\"status\",\"attempts\", \"activity\", \"created\"]}",
             "{$match: {$expr: {$ne: [ {$toString: \"$_id\"}, ?0 ]}}}",
-            "{$match: {$expr: {$or: [{$regexMatch: {input: \"$name\", regex: ?1, options: i}}, {$regexMatch: {input: \"$email\", regex: ?1, options: i}}]}}}",
+            "{$match: {$expr: {$or: [{$regexMatch: {input: \"$name\", regex: ?1, options: i}}, {$regexMatch: {input: \"$email\", regex: ?1, options: i}},{$regexMatch: {input: \"$username\", regex: ?1, options: i}}]}}}",
             "{$lookup: {from: \"friends\", let: {\"id\": {$toString: \"$_id\"}}, pipeline: [{$match: {$expr: {$or: [{$and: [{$eq: [\"$first\", $$id]}, {$eq: [\"$second\", ?0]}]}, {$and: [{$eq: [\"$second\", $$id]}, {$eq: [\"$first\", ?0]}]}]}}}], as: \"friend\"}}",
             "{$lookup: {from: \"requests\", let: {\"id\": {$toString: \"$_id\"}}, pipeline: [{$match: {$expr: {$and: [{$eq: [\"$from\", ?0]}, {$eq: [\"$to\", $$id]}]}}}], as: \"requested\"}}",
             "{$lookup: {from: \"requests\", let: {\"id\": {$toString: \"$_id\"}}, pipeline: [{$match: {$expr: {$and: [{$eq: [\"$to\", ?0]}, {$eq: [\"$from\", $$id]}]}}}], as: \"pending\"}}",
