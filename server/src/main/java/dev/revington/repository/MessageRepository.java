@@ -19,6 +19,9 @@ public interface MessageRepository extends MongoRepository<Message, String> {
     int countByFromAndTo(String from, String to);
     
     void deleteByFromAndTo(String from, String to);
+
+    @Query(value = "{$expr: {$or: [{$and: [{$eq: [\"$from\", ?0]}, {$eq: [\"$to\", ?1]}]}, {$and: [{$eq: [\"$from\", ?1]}, {$eq: [\"$to\", ?0]}]}]}}", delete = true)
+    void deleteByUsername(String from, String to);
     
     @Query(value="{$expr: {$or: [{$and: [{$eq: [?0, \"$to\"]}, {$eq: [?1, \"$from\"]}]}, {$and: [{$eq: [?1, \"$to\"]}, {$eq: [?0, \"$from\"]}]}]}}", delete = true)
     void deleteByFromAndToOrToAndFrom(String from, String to);
