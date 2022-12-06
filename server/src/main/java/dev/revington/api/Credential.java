@@ -37,28 +37,30 @@ public class Credential {
 
     private final Logger LOGGER = Logger.getLogger(Credential.class.getName());
 
-    private boolean changeCred(User user) {
-        user.setEmail(SecurityUtil.normalizeEmail(user.getEmail()));
+    private boolean changeCredentials(User user) {
+        user.setEmail(SecurityUtil.normalizeEmail(user.getIdentity()));
+        user.setUsername(user.getIdentity());
+        user.setIdentity(null);
         try {
             user.setPassword(SecurityUtil.md5Hash(user.getPassword()));
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, null, e);
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<JSONObject> login(HttpServletRequest req, HttpServletResponse resp,
                                             @RequestBody User user,
                                             @RequestParam(required = false, defaultValue = "false") String remember) throws IOException {
-        if (!changeCred(user)) {
+        if (changeCredentials(user)) {
             resp.sendError(500);
             return null;
         }
 
-        User client = userRepository.findByEmail(user.getEmail());
+        User client = userRepository.findByEmailOrUsername(user.getEmail(), user.getUsername());
         if (client == null) {
             resp.sendError(1022, Parameter.E1022);
             return null;
@@ -114,19 +116,19 @@ public class Credential {
     @PostMapping("/signup")
     public ResponseEntity<JSONObject> signUp(HttpServletRequest req, HttpServletResponse resp,
                                              @RequestBody User user) throws IOException {
-        if (!changeCred(user)) {
+        if (changeCredentials(user)) {
             resp.sendError(500);
             return null;
         }
 
-        User client = userRepository.findByEmail(user.getEmail());
+        User client = userRepository.findByEmailOrUsername(user.getEmail(), user.getUsername());
         if (client != null) {
             resp.sendError(1025, Parameter.E1025);
             return null;
         }
 
         if (user.getEmail() == null || user.getPassword() == null || user.getFirstname() == null ||
-                user.getLastname() == null) {
+                user.getLastname() == null || user.getUsername() == null) {
             resp.sendError(1026, Parameter.E1026);
             return null;
         }
