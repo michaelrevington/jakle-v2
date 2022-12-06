@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+
 @RestController
 @RequestMapping("/api/v2/account")
 public class Account {
@@ -34,6 +36,38 @@ public class Account {
             cookie.setPath("/");
             cookie.setHttpOnly(true);
         });
+
+        return new ResponseEntity<>(StatusHandler.S200, HttpStatus.OK);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<JSONObject> update(HttpServletRequest request, HttpServletResponse response,
+                                             @RequestBody User user) {
+        User client = userRepository.findById(request.getAttribute(Parameter.CLIENT_ID).toString()).get();
+
+        if (user.getName() != null) {
+            client.setName(user.getName());
+        }
+
+        if (user.getDateOfBirth() != null) {
+            client.setDateOfBirth(user.getDateOfBirth());
+        }
+
+        if (user.getBio() != null) {
+            client.setBio(user.getBio());
+        }
+
+        if (user.getLinks() != null) {
+            HashMap<String, String> links = client.getLinks();
+            user.getLinks().forEach((key, val) -> {
+                if (links.containsKey(key))
+                    links.replace(key, val);
+                else
+                    links.put(key, val);
+            });
+        }
+
+        userRepository.save(client);
 
         return new ResponseEntity<>(StatusHandler.S200, HttpStatus.OK);
     }
