@@ -73,18 +73,30 @@ public class Account {
         return new ResponseEntity<>(StatusHandler.S200, HttpStatus.OK);
     }
 
-    @PostMapping("/username")
+    @PostMapping("/update/access")
     public ResponseEntity<JSONObject> updateUsername(HttpServletRequest request, HttpServletResponse response,
                                                      @RequestBody User user) throws IOException {
-        User client = userRepository.findByUsername(user.getUsername());
-        if (client != null) {
+        String username = user.getUsername(), email = user.getEmail();
+        User client = userRepository.findByUsername(username);
+        if (username != null && client != null) {
             response.sendError(1027, Parameter.E1027);
             return null;
         }
 
-        client = userRepository.findById(request.getAttribute(Parameter.CLIENT_ID).toString()).get();
+        client = userRepository.findByEmail(email);
+        if (email != null && client != null) {
+            response.sendError(1025, Parameter.E1025);
+            return null;
+        }
 
-        client.setUsername(user.getUsername());
+        client = userRepository.findById(request.getAttribute(Parameter.CLIENT_ID).toString()).get();
+        if (username != null) {
+            client.setUsername(username);
+        }
+
+        if (email != null) {
+            client.setEmail(email);
+        }
         userRepository.save(client);
 
         return new ResponseEntity<>(StatusHandler.S200, HttpStatus.OK);
