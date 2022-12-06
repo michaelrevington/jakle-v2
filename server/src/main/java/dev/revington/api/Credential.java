@@ -38,9 +38,16 @@ public class Credential {
     private final Logger LOGGER = Logger.getLogger(Credential.class.getName());
 
     private boolean changeCredentials(User user) {
-        user.setEmail(SecurityUtil.normalizeEmail(user.getIdentity()));
-        user.setUsername(user.getIdentity());
-        user.setIdentity(null);
+        if (user.getIdentity() != null) {
+            if (user.getIdentity().contains("@")) {
+                user.setEmail(SecurityUtil.normalizeEmail(user.getIdentity()));
+            } else {
+                user.setUsername(user.getIdentity());
+            }
+            user.setIdentity(null);
+        } else {
+            user.setEmail(SecurityUtil.normalizeEmail(user.getEmail()));
+        }
         try {
             user.setPassword(SecurityUtil.md5Hash(user.getPassword()));
         } catch (Exception e) {
@@ -55,7 +62,12 @@ public class Credential {
     public ResponseEntity<JSONObject> login(HttpServletRequest req, HttpServletResponse resp,
                                             @RequestBody User user,
                                             @RequestParam(required = false, defaultValue = "false") String remember) throws IOException {
-        if (changeCredentials(user)) {
+         if (user.getIdentity() == null || user.getPassword() == null) {
+            resp.sendError(1026, Parameter.E1026);
+            return null;
+        }
+
+         if (changeCredentials(user)) {
             resp.sendError(500);
             return null;
         }
@@ -116,6 +128,12 @@ public class Credential {
     @PostMapping("/signup")
     public ResponseEntity<JSONObject> signUp(HttpServletRequest req, HttpServletResponse resp,
                                              @RequestBody User user) throws IOException {
+        if (user.getEmail() == null || user.getPassword() == null || user.getFirstname() == null ||
+                user.getLastname() == null || user.getUsername() == null) {
+            resp.sendError(1026, Parameter.E1026);
+            return null;
+        }
+
         if (changeCredentials(user)) {
             resp.sendError(500);
             return null;
@@ -123,13 +141,10 @@ public class Credential {
 
         User client = userRepository.findByEmailOrUsername(user.getEmail(), user.getUsername());
         if (client != null) {
-            resp.sendError(1025, Parameter.E1025);
-            return null;
-        }
-
-        if (user.getEmail() == null || user.getPassword() == null || user.getFirstname() == null ||
-                user.getLastname() == null || user.getUsername() == null) {
-            resp.sendError(1026, Parameter.E1026);
+            if (user.getEmail() == null)
+                resp.sendError(1027, Parameter.E1027);
+            else
+                resp.sendError(1025, Parameter.E1025);
             return null;
         }
 
