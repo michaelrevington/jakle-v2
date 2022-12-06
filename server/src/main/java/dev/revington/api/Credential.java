@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -153,6 +154,7 @@ public class Credential {
         user.setLastname(null);
         user.setCreated(new Date().getTime());
         user.setValidity(Parameter.ACCOUNT_INVALIDATED);
+        user.setLinks(new HashMap<>());
 
         userRepository.save(user);
 

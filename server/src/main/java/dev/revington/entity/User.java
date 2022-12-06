@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import dev.revington.util.DefaultValueFilter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.Date; 
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 @Document("users")
 @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = DefaultValueFilter.class)
@@ -25,6 +28,7 @@ public class User {
     private String active;
     private String type;
     private String identity;
+    private String bio;
 
     private Date dateOfBirth;
 
@@ -36,6 +40,8 @@ public class User {
  
     private long time;
     private long created;
+
+    private HashMap<String, String> links;
 
     public void setCreated(long created) {
         this.created = created;
@@ -99,6 +105,22 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public HashMap<String, String> getLinks() {
+        return links;
+    }
+
+    public void setLinks(HashMap<String, String> links) {
+        this.links = links;
     }
 
     public String getPassword() {
