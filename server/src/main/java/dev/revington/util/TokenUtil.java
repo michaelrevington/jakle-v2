@@ -17,10 +17,10 @@ public class TokenUtil {
         Timestamp timestamp = new Timestamp(new Date().getTime());
         token.setCreated(timestamp.getTime());
 
-        token.setToken(SecurityUtil.md5Hash(user.getName()) +
-                SecurityUtil.md5Hash(user.getEmail()) +
-                SecurityUtil.md5Hash(timestamp.getTime() + "") +
-                SecurityUtil.md5Hash(user.getId()));
+        token.setToken(SecurityUtil.sha256Hash(user.getName()) +
+                SecurityUtil.sha256Hash(user.getEmail()) +
+                SecurityUtil.sha256Hash(timestamp.getTime() + "") +
+                SecurityUtil.sha256Hash(user.getId()));
 
         switch (type) {
             case Parameter.AUTH_TOKEN -> {

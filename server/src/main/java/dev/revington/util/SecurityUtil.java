@@ -1,5 +1,7 @@
 package dev.revington.util;
 
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import org.apache.tomcat.util.security.MD5Encoder;
 
 import java.net.URLEncoder;
@@ -17,10 +19,9 @@ public class SecurityUtil {
         return email.substring(0, at).replace(".", "").replace("+", "") + email.substring(at);
     }
 
-    public static String md5Hash(String text) throws NoSuchAlgorithmException {
-        MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-        messageDigest.update(text.getBytes(StandardCharsets.UTF_8));
-        return URLEncoder.encode(new String(messageDigest.digest()), StandardCharsets.UTF_8);
+    public static String sha256Hash(String text) throws NoSuchAlgorithmException {
+        HashFunction hashFunction = Hashing.sha256();
+        return hashFunction.hashString(text, StandardCharsets.UTF_8).toString();
     }
 
 }

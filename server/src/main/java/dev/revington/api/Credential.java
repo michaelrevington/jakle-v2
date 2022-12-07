@@ -50,7 +50,7 @@ public class Credential {
             user.setEmail(SecurityUtil.normalizeEmail(user.getEmail()));
         }
         try {
-            user.setPassword(SecurityUtil.md5Hash(user.getPassword()));
+            user.setPassword(SecurityUtil.sha256Hash(user.getPassword()));
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, null, e);
             return true;
