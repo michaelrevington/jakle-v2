@@ -1,11 +1,26 @@
-import { Component as ReactComponent } from "react";
+import { Component as ReactComponent, useEffect, useRef } from "react";
 import "../styles/globals.css";
 import "../styles/const.css";
 import { useRouter } from "next/router";
 import PageLoader from "../src/components/PageLoader";
 import Head from "next/head";
 
+import ComponentStyles from "../styles/Component.module.css";
+
 const Application = (props) => {
+  useEffect(() => {
+    let observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting)
+          entry.target.classList.add(ComponentStyles.fadeIn);
+      });
+    });
+
+    document.querySelectorAll("[aria-fade-in=true]").forEach((element) => {
+      observer.observe(element);
+    });
+  });
+
   return <ApplicationComponent {...props} router={useRouter()} />;
 };
 
@@ -52,7 +67,7 @@ class ApplicationComponent extends ReactComponent {
       <>
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link href={"/static/favicon.ico"} rel="icon"/>
+          <link href={"/static/favicon.ico"} rel="icon" />
         </Head>
 
         <PageLoader
